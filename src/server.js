@@ -12,7 +12,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import servicesRoutes from './routes/services.js';
 import productsRoutes from './routes/products.js';
-import bookingsRoutes from './routes/bookings.js';
+// import bookingsRoutes from './routes/bookings.js';
 import blogRoutes from './routes/blog.js';
 import testimonialsRoutes from './routes/testimonials.js';
 import notificationsRoutes from './routes/notifications.js';
@@ -97,7 +97,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/services', servicesRoutes);
 app.use('/api/products', productsRoutes);
-app.use('/api/bookings', bookingsRoutes);
+// app.use('/api/bookings', bookingsRoutes);
 app.use('/api/blog', blogRoutes);
 app.use('/api/testimonials', testimonialsRoutes);
 app.use('/api/notifications', notificationsRoutes);

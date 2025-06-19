@@ -84,13 +84,15 @@ app.use(compression());
 app.use(morgan("combined"));
 
 // Example Express middleware to set CSP
+// ...existing code...
 app.use((req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
-    "script-src 'self' https://unpkg.com; style-src 'self' https://unpkg.com"
+    "script-src 'self' https://unpkg.com; style-src 'self' https://unpkg.com 'unsafe-inline'"
   );
   next();
 });
+// ...existing code...
 
 // API Documentation
 const swaggerUiOptions = {

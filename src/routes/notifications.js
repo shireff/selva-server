@@ -1,5 +1,5 @@
 import express from 'express';
-import { getNotifications, markNotificationAsRead, sendNotification, subscribeToPushNotifications } from '../controllers/notification-controller';
+import { getNotifications, markNotificationAsRead, sendNotification, subscribeToPushNotifications } from '../controllers/notification-controller.js';
 
 const router = express.Router();
 

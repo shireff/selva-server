@@ -1,8 +1,7 @@
 import express from "express";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+
 import { body, validationResult } from "express-validator";
-import { login, logout, register } from "../controllers/auth-controller";
+import { login, logout, register } from "../controllers/auth-controller.js";
 
 const router = express.Router();
 

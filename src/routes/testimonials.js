@@ -1,6 +1,6 @@
 import express from "express";
 import { body } from "express-validator";
-import { approveTestimonial, createTestimonial, deleteTestimonial, getAllTestimonials, getTestimonialById, updateTestimonial } from "../controllers/testimonials-controllers";
+import { approveTestimonial, createTestimonial, deleteTestimonial, getAllTestimonials, getTestimonialById, updateTestimonial } from "../controllers/testimonials-controllers.js";
 
 const router = express.Router();
 

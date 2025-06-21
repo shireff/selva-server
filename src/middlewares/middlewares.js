@@ -1,4 +1,4 @@
-import cors from "cors";
+// import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
@@ -10,12 +10,12 @@ export const configureMiddleware = (app) => {
   app.use(helmet());
 
   // CORS middleware with dynamic origin based on environment
-  app.use(
-    cors({
-      origin: "https://selva-nail-shop.vercel.app" || "http://localhost:5173",
-      credentials: true,
-    })
-  );
+  // app.use(
+  //   cors({
+  //     origin: "http://localhost:5173" || "https://selva-nail-shop.vercel.app",
+  //     credentials: true,
+  //   })
+  // );
 
   // Rate limiting
   const limiter = rateLimit({

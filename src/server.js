@@ -1,9 +1,4 @@
 import express from "express";
-import cors from "cors";
-import helmet from "helmet";
-import morgan from "morgan";
-import compression from "compression";
-import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 
 // Import routes
@@ -16,9 +11,10 @@ import notificationsRoutes from "./routes/notifications.js";
 import { configureSwagger } from "./swagger.js";
 import { configureMiddleware } from "./middlewares/middlewares.js";
 import { configureErrorHandling } from "./middlewares/errorHandling.js";
+import connectDB from "./database.js";
 
 dotenv.config();
-
+connectDB();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -36,8 +32,6 @@ app.use((req, res, next) => {
   );
   next();
 });
-
-
 
 // Health check endpoint
 app.get("/health", (req, res) => {
@@ -67,7 +61,6 @@ app.get("/api/initialize", (req, res) => {
 
 // Error handling middleware
 configureErrorHandling(app);
-
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);

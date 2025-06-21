@@ -1,4 +1,5 @@
 import { validationResult } from "express-validator";
+import BlogPost from "../modals/blogPostModel.js";
 
 // Mock blog posts database
 let blogPosts = [
@@ -81,45 +82,31 @@ const categories = [
 ];
 
 // Get all blog posts
-export const getAllBlogPosts = (req, res) => {
+export const getAllBlogPosts = async (req, res) => {
   try {
     const { category, limit, search } = req.query;
 
-    let filteredPosts = blogPosts.filter((post) => post.isPublished);
-
+    let filter = { isPublished: true };
     if (category && category !== "all") {
-      filteredPosts = filteredPosts.filter(
-        (post) => post.category === category
-      );
+      filter.category = category;
     }
-
     if (search) {
-      const searchTerm = search.toLowerCase();
-      filteredPosts = filteredPosts.filter(
-        (post) =>
-          post.title.toLowerCase().includes(searchTerm) ||
-          post.excerpt.toLowerCase().includes(searchTerm) ||
-          post.content.toLowerCase().includes(searchTerm)
-      );
+      const regex = new RegExp(search, "i");
+      filter.$or = [{ title: regex }, { excerpt: regex }, { content: regex }];
     }
 
+    let query = BlogPost.find(filter).sort({ publishedAt: -1 });
     if (limit) {
-      filteredPosts = filteredPosts.slice(0, parseInt(limit));
+      query = query.limit(parseInt(limit));
     }
+    const posts = await query.exec();
 
-    // Sort by publication date (newest first)
-    filteredPosts.sort(
-      (a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)
-    );
-
-    const featuredPosts = filteredPosts
-      .filter((post) => post.views > 1000)
-      .slice(0, 3);
+    const featuredPosts = posts.filter((post) => post.views > 1000).slice(0, 3);
 
     res.json({
-      posts: filteredPosts,
-      categories: categories,
-      featuredPosts: featuredPosts,
+      posts,
+      categories,
+      featuredPosts,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });

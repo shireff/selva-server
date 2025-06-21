@@ -11,6 +11,7 @@ import {
   toggleWishlist,
   updateProduct,
 } from "../controllers/product-controller.js";
+import upload from "../utils/upload.js";
 
 const router = express.Router();
 
@@ -180,6 +181,7 @@ router.get("/", getProducts);
  */
 router.post(
   "/",
+  upload.single("image"),
   [
     body("name").notEmpty().withMessage("Product name is required"),
     body("description").notEmpty().withMessage("Description is required"),
@@ -248,7 +250,7 @@ router.post(
  *       500:
  *         description: Server error
  */
-router.put("/:id", updateProduct);
+router.put("/:id", upload.single("image"), updateProduct);
 
 /**
  * @swagger

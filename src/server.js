@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import path from "path";
 
 // Import routes
 import authRoutes from "./routes/auth.js";
@@ -17,7 +18,6 @@ dotenv.config();
 connectDB();
 const app = express();
 const PORT = process.env.PORT || 5000;
-
 // Swagger configuration
 configureSwagger(app, PORT);
 

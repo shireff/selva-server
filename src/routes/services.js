@@ -1,9 +1,15 @@
-import express from 'express';
-import { body, validationResult } from 'express-validator';
-import { createService, deleteService, getAllServices, getServiceById, updateService } from '../controllers/services-controller.js';
+import express from "express";
+import { body, validationResult } from "express-validator";
+import {
+  createService,
+  deleteService,
+  getAllServices,
+  getServiceById,
+  updateService,
+} from "../controllers/services-controller.js";
+import upload from "../utils/upload.js";
 
 const router = express.Router();
-
 
 /**
  * @swagger
@@ -78,8 +84,7 @@ const router = express.Router();
  *                   items:
  *                     type: string
  */
-router.get('/', getAllServices);
-
+router.get("/", getAllServices);
 
 /**
  * @swagger
@@ -100,7 +105,7 @@ router.get('/', getAllServices);
  *       404:
  *         description: Service not found
  */
-router.get('/:id', getServiceById);
+router.get("/:id", getServiceById);
 
 /**
  * @swagger
@@ -122,13 +127,18 @@ router.get('/:id', getServiceById);
  *       400:
  *         description: Validation error
  */
-router.post('/', [
-  body('name').notEmpty().withMessage('Service name is required'),
-  body('description').notEmpty().withMessage('Description is required'),
-  body('price').isNumeric().withMessage('Price must be a number'),
-  body('duration').isNumeric().withMessage('Duration must be a number'),
-  body('category').notEmpty().withMessage('Category is required')
-], createService);
+router.post(
+  "/",
+  upload.single("image"),
+  [
+    body("name").notEmpty().withMessage("Service name is required"),
+    body("description").notEmpty().withMessage("Description is required"),
+    body("price").isNumeric().withMessage("Price must be a number"),
+    body("duration").isNumeric().withMessage("Duration must be a number"),
+    body("category").notEmpty().withMessage("Category is required"),
+  ],
+  createService
+);
 /**
  * @swagger
  * /api/services/{id}:
@@ -155,8 +165,7 @@ router.post('/', [
  *       404:
  *         description: Service not found
  */
-router.put('/:id', updateService);
-
+router.put("/:id", upload.single("image"), updateService);
 
 /**
  * @swagger
@@ -178,7 +187,6 @@ router.put('/:id', updateService);
  *       404:
  *         description: Service not found
  */
-router.delete('/:id', deleteService);
-
+router.delete("/:id", deleteService);
 
 export default router;

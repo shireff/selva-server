@@ -42,8 +42,14 @@ export const addProduct = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
+    let imageUrl = "";
+    if (req.file && req.file.path) {
+      imageUrl = req.file.path;
+    }
+
     const newProduct = new Product({
       ...req.body,
+      image: imageUrl,
     });
 
     await newProduct.save();
@@ -60,7 +66,6 @@ export const addProduct = async (req, res) => {
   }
 };
 
-// Update product
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -88,6 +93,11 @@ export const updateProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
+    let imageUrl = product.image;
+    if (req.file && req.file.path) {
+      imageUrl = req.file.path;
+    }
+
     product.name = name || product.name;
     product.description = description || product.description;
     product.price = price || product.price;
@@ -95,11 +105,11 @@ export const updateProduct = async (req, res) => {
     product.brand = brand || product.brand;
     product.stockQuantity = stockQuantity || product.stockQuantity;
     product.discountPrice = discountPrice || product.discountPrice;
-    product.images = images || product.images;
     product.tags = tags || product.tags;
-    product.isNew = isNew || product.isNew;
-    product.isFeatured = isFeatured || product.isFeatured;
-
+    product.isNew = isNew !== undefined ? isNew : product.isNew;
+    product.isFeatured =
+      isFeatured !== undefined ? isFeatured : product.isFeatured;
+    product.image = imageUrl;
     await product.save();
 
     res.json({

@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-// Define the schema for the BlogPost model
 const blogPostSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
@@ -23,7 +22,6 @@ const blogPostSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Create the model from the schema
 const BlogPost = mongoose.model("BlogPost", blogPostSchema);
 
 export default BlogPost;

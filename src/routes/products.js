@@ -1,12 +1,15 @@
 import express from "express";
 import { body, validationResult } from "express-validator";
 import {
+  addProduct,
   addToCart,
+  deleteProduct,
   getCartItems,
   getProductById,
   getProducts,
   removeFromCart,
   toggleWishlist,
+  updateProduct,
 } from "../controllers/product-controller.js";
 
 const router = express.Router();
@@ -105,6 +108,150 @@ router.get("/", getProducts);
 
 /**
  * @swagger
+ * /api/products:
+ *   post:
+ *     summary: Add a new product
+ *     tags: [Products]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - description
+ *               - price
+ *               - category
+ *               - brand
+ *               - stockQuantity
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Product name
+ *               description:
+ *                 type: string
+ *                 description: Product description
+ *               price:
+ *                 type: number
+ *                 description: Product price
+ *               discountPrice:
+ *                 type: number
+ *                 description: Discounted price
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Product images
+ *               category:
+ *                 type: string
+ *                 description: Product category
+ *               brand:
+ *                 type: string
+ *                 description: Product brand
+ *               inStock:
+ *                 type: boolean
+ *                 description: Whether the product is in stock
+ *               stockQuantity:
+ *                 type: number
+ *                 description: The quantity of the product in stock
+ *               rating:
+ *                 type: number
+ *                 description: Product rating (1-5)
+ *               reviews:
+ *                 type: number
+ *                 description: Number of reviews for the product
+ *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Product tags for filtering
+ *               isNew:
+ *                 type: boolean
+ *                 description: Whether the product is new
+ *               isFeatured:
+ *                 type: boolean
+ *                 description: Whether the product is featured
+ *     responses:
+ *       201:
+ *         description: Product added successfully
+ *       400:
+ *         description: Validation error
+ */
+router.post(
+  "/",
+  [
+    body("name").notEmpty().withMessage("Product name is required"),
+    body("description").notEmpty().withMessage("Description is required"),
+    body("price").isNumeric().withMessage("Price must be a number"),
+    body("category").notEmpty().withMessage("Category is required"),
+    body("brand").notEmpty().withMessage("Brand is required"),
+    body("stockQuantity")
+      .isInt()
+      .withMessage("Stock quantity must be an integer"),
+  ],
+  addProduct
+);
+
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   put:
+ *     summary: Update product by ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               category:
+ *                 type: string
+ *               brand:
+ *                 type: string
+ *               stockQuantity:
+ *                 type: number
+ *               discountPrice:
+ *                 type: number
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               isNew:
+ *                 type: boolean
+ *               isFeatured:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Product updated successfully
+ *       404:
+ *         description: Product not found
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Server error
+ */
+router.put("/:id", updateProduct);
+
+/**
+ * @swagger
  * /api/products/{id}:
  *   get:
  *     summary: Get product by ID
@@ -122,6 +269,28 @@ router.get("/", getProducts);
  *         description: Product not found
  */
 router.get("/:id", getProductById);
+
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   delete:
+ *     summary: Delete product by ID
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Product deleted successfully
+ *       404:
+ *         description: Product not found
+ *       500:
+ *         description: Server error
+ */
+router.delete("/:id", deleteProduct);
 
 /**
  * @swagger
@@ -196,7 +365,6 @@ router.get("/cart", getCartItems);
  */
 router.delete("/cart/:productId", removeFromCart);
 
-
 /**
  * @swagger
  * /api/wishlist:
@@ -217,6 +385,5 @@ router.delete("/cart/:productId", removeFromCart);
  *         description: Wishlist updated
  */
 router.post("/wishlist", toggleWishlist);
-
 
 export default router;

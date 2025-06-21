@@ -33,5 +33,5 @@ export const configureMiddleware = (app) => {
   app.use(compression());
 
   // Logging middleware
-  app.use(morgan("combined"));
+  //  app.use(morgan("combined"));
 };

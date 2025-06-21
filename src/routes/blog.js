@@ -4,13 +4,6 @@ import { createBlogPost, deleteBlogPost, getAllBlogPosts, getBlogPostById, updat
 
 const router = express.Router();
 
-const categories = [
-  "Nail Care",
-  "Trends",
-  "Tips & Tricks",
-  "DIY",
-  "Product Reviews",
-];
 
 /**
  * @swagger

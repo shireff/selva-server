@@ -6,17 +6,6 @@ import { login, logout, register } from "../controllers/auth-controller";
 
 const router = express.Router();
 
-const users = [
-  {
-    id: "1",
-    name: "Admin User",
-    email: "admin@admin.com",
-    password: "123", // password
-    // password: "$2b$10$w8b8QwQwQwQwQwQwQwQwQeQwQwQwQwQwQwQwQwQwQwQwQwQwQwQ", // hashed password
-    role: "admin",
-  },
-];
-
 /**
  * @swagger
  * components:

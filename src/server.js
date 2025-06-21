@@ -4,8 +4,6 @@ import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
 import rateLimit from "express-rate-limit";
-import swaggerJsdoc from "swagger-jsdoc";
-import swaggerUi from "swagger-ui-express";
 import dotenv from "dotenv";
 
 // Import routes
@@ -15,6 +13,9 @@ import productsRoutes from "./routes/products.js";
 import blogRoutes from "./routes/blog.js";
 import testimonialsRoutes from "./routes/testimonials.js";
 import notificationsRoutes from "./routes/notifications.js";
+import { configureSwagger } from "./swagger.js";
+import { configureMiddleware } from "./middlewares/middlewares.js";
+import { configureErrorHandling } from "./middlewares/errorHandling.js";
 
 dotenv.config();
 
@@ -22,67 +23,11 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Swagger configuration
-const swaggerOptions = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "Selva Nail Shop API",
-      version: "1.0.0",
-      description: "API for Selva Hard Gel Nail Shop management system",
-      contact: {
-        name: "Selva Team",
-        email: "api@selva-nails.com",
-      },
-    },
-    servers: [
-      {
-        url: `http://localhost:${PORT}`,
-        description: "Development server",
-      },
-    ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
-    },
-  },
-  apis: ["./src/routes/*.js", "./src/models/*.js"],
-};
-
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
+configureSwagger(app, PORT);
 
 // Security middleware
-app.use(helmet());
-app.use(
-  cors({
-    origin: "https://selva-nail-shop.vercel.app" || "http://localhost:5173",
-    credentials: true,
-  })
-);
+configureMiddleware(app);
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP, please try again later.",
-});
-app.use("/api/", limiter);
-
-// Body parsing middleware
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
-
-// Compression middleware
-app.use(compression());
-
-// Logging middleware
-app.use(morgan("combined"));
-
-// Example Express middleware to set CSP
 // ...existing code...
 app.use((req, res, next) => {
   res.setHeader(
@@ -91,22 +36,8 @@ app.use((req, res, next) => {
   );
   next();
 });
-// ...existing code...
 
-// API Documentation
-const swaggerUiOptions = {
-  customCssUrl: "https://unpkg.com/swagger-ui-dist/swagger-ui.css",
-  customJs: [
-    "https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js",
-    "https://unpkg.com/swagger-ui-dist/swagger-ui-standalone-preset.js",
-  ],
-};
 
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, swaggerUiOptions)
-);
 
 // Health check endpoint
 app.get("/health", (req, res) => {
@@ -135,24 +66,8 @@ app.get("/api/initialize", (req, res) => {
 });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    error: "Something went wrong!",
-    message:
-      process.env.NODE_ENV === "development"
-        ? err.message
-        : "Internal server error",
-  });
-});
+configureErrorHandling(app);
 
-// 404 handler
-app.use("*", (req, res) => {
-  res.status(404).json({
-    error: "Route not found",
-    message: `The requested route ${req.originalUrl} does not exist`,
-  });
-});
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
